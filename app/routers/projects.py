@@ -30,9 +30,7 @@ async def create_project(payload: ProjectCreate, db: AsyncSession = Depends(get_
     return proj
 
 @router.patch("/{project_id}", response_model=ProjectOut)
-async def update_project(
-    project_id: uuid.UUID, payload: ProjectUpdate, db: AsyncSession = Depends(get_db)
-):
+async def update_project(project_id: uuid.UUID, payload: ProjectUpdate, db: AsyncSession = Depends(get_db)):
     proj = (await db.execute(select(Project).where(Project.id == project_id))).scalar_one_or_none()
     if not proj:
         raise HTTPException(status_code=404, detail="Project not found")

@@ -30,9 +30,7 @@ async def create_site_visit(payload: SiteVisitCreate, db: AsyncSession = Depends
     return sv
 
 @router.patch("/{site_visit_id}", response_model=SiteVisitOut)
-async def update_site_visit(
-    site_visit_id: uuid.UUID, payload: SiteVisitUpdate, db: AsyncSession = Depends(get_db)
-):
+async def update_site_visit(site_visit_id: uuid.UUID, payload: SiteVisitUpdate, db: AsyncSession = Depends(get_db)):
     sv = (await db.execute(select(SiteVisit).where(SiteVisit.id == site_visit_id))).scalar_one_or_none()
     if not sv:
         raise HTTPException(status_code=404, detail="Site visit not found")

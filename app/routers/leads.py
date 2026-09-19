@@ -1,11 +1,12 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import or_, func, desc, asc
+from sqlalchemy import func
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.models.lead import Lead
 from app.schemas.lead import LeadCreate, LeadOut, PaginatedLeads
+from app.services.lead_query import build_leads_query
 
 router = APIRouter(prefix="/api/leads", tags=["Leads"])
 
@@ -21,27 +22,10 @@ async def get_leads(
     sort_order: str = "desc",
     db: AsyncSession = Depends(get_db)
 ):
-    query = select(Lead)
-    if search:
-        f = f"%{search}%"
-        query = query.where(
-            or_(Lead.name.ilike(f), Lead.phone.ilike(f), Lead.email.ilike(f))
-        )
-    if status:
-        query = query.where(Lead.status == status)
-    if source:
-        query = query.where(Lead.source == source)
-    if assigned_to:
-        query = query.where(Lead.assigned_to == assigned_to)
-
+    query = build_leads_query(search, status, source, assigned_to, sort_by, sort_order)
     count_query = select(func.count()).select_from(query.subquery())
     total = (await db.execute(count_query)).scalar() or 0
-
-    col = getattr(Lead, sort_by, Lead.created_at)
-    query = query.order_by(desc(col) if sort_order.lower() == "desc" else asc(col))
-    query = query.offset((page - 1) * page_size).limit(page_size)
-
-    result = await db.execute(query)
+    result = await db.execute(query.offset((page - 1) * page_size).limit(page_size))
     return PaginatedLeads(
         total=total, page=page, page_size=page_size, data=result.scalars().all()
     )
