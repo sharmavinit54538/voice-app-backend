@@ -13,31 +13,16 @@ router = APIRouter(prefix="/api/analytics", tags=["Analytics"])
 @router.get("/calls")
 async def get_calls_analytics(db: AsyncSession = Depends(get_db)):
     res = await db.execute(
-        select(
-            Call.status,
-            func.count(Call.id),
-            func.coalesce(func.sum(Call.duration), 0)
-        ).group_by(Call.status)
+        select(Call.status, func.count(Call.id), func.coalesce(func.sum(Call.duration), 0)).group_by(Call.status)
     )
-    data = [{"status": row[0], "count": row[1], "total_seconds": int(row[2])} for row in res.all()]
-    return {"success": True, "calls_by_status": data}
+    return {"success": True, "calls_by_status": [{"status": r[0], "count": r[1], "total_seconds": int(r[2])} for r in res.all()]}
 
 @router.get("/campaigns")
 async def get_campaigns_analytics(db: AsyncSession = Depends(get_db)):
     res = await db.execute(
-        select(
-            Campaign.id,
-            Campaign.name,
-            Campaign.status,
-            Campaign.total_recipients,
-            Campaign.delivered_count,
-            Campaign.failed_count
-        )
+        select(Campaign.id, Campaign.name, Campaign.status, Campaign.total_recipients, Campaign.delivered_count, Campaign.failed_count)
     )
-    data = [
-        {"id": r[0], "name": r[1], "status": r[2], "total_recipients": r[3], "delivered_count": r[4], "failed_count": r[5]}
-        for r in res.all()
-    ]
+    data = [{"id": r[0], "name": r[1], "status": r[2], "total_recipients": r[3], "delivered_count": r[4], "failed_count": r[5]} for r in res.all()]
     return {"success": True, "campaigns": data}
 
 @router.get("/follow-ups")

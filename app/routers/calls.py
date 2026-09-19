@@ -16,8 +16,7 @@ async def list_calls(db: AsyncSession = Depends(get_db)):
 
 @router.get("/{call_id}", response_model=CallOut)
 async def get_call(call_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(Call).where(Call.id == call_id))
-    call = res.scalar_one_or_none()
+    call = (await db.execute(select(Call).where(Call.id == call_id))).scalar_one_or_none()
     if not call:
         raise HTTPException(status_code=404, detail="Call record not found")
     return call
@@ -32,8 +31,7 @@ async def log_call(payload: CallCreate, db: AsyncSession = Depends(get_db)):
 
 @router.patch("/{call_id}", response_model=CallOut)
 async def update_call(call_id: uuid.UUID, payload: CallUpdate, db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(Call).where(Call.id == call_id))
-    call = res.scalar_one_or_none()
+    call = (await db.execute(select(Call).where(Call.id == call_id))).scalar_one_or_none()
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
     for k, v in payload.model_dump(exclude_unset=True).items():
@@ -44,8 +42,7 @@ async def update_call(call_id: uuid.UUID, payload: CallUpdate, db: AsyncSession 
 
 @router.delete("/{call_id}")
 async def delete_call(call_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(Call).where(Call.id == call_id))
-    call = res.scalar_one_or_none()
+    call = (await db.execute(select(Call).where(Call.id == call_id))).scalar_one_or_none()
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
     await db.delete(call)

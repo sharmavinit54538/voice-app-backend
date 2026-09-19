@@ -16,8 +16,7 @@ async def list_campaigns(db: AsyncSession = Depends(get_db)):
 
 @router.get("/{campaign_id}", response_model=CampaignOut)
 async def get_campaign(campaign_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(Campaign).where(Campaign.id == campaign_id))
-    camp = res.scalar_one_or_none()
+    camp = (await db.execute(select(Campaign).where(Campaign.id == campaign_id))).scalar_one_or_none()
     if not camp:
         raise HTTPException(status_code=404, detail="Campaign not found")
     return camp
@@ -25,11 +24,8 @@ async def get_campaign(campaign_id: uuid.UUID, db: AsyncSession = Depends(get_db
 @router.post("", response_model=CampaignOut, status_code=201)
 async def create_campaign(payload: CampaignCreate, db: AsyncSession = Depends(get_db)):
     camp = Campaign(
-        name=payload.name,
-        channel=payload.channel,
-        template_name=payload.template_name,
-        status="draft",
-        total_recipients=len(payload.recipients) if payload.recipients else 0
+        name=payload.name, channel=payload.channel, template_name=payload.template_name,
+        status="draft", total_recipients=len(payload.recipients) if payload.recipients else 0
     )
     db.add(camp)
     await db.flush()
@@ -45,8 +41,7 @@ async def create_campaign(payload: CampaignCreate, db: AsyncSession = Depends(ge
 
 @router.delete("/{campaign_id}")
 async def delete_campaign(campaign_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(Campaign).where(Campaign.id == campaign_id))
-    camp = res.scalar_one_or_none()
+    camp = (await db.execute(select(Campaign).where(Campaign.id == campaign_id))).scalar_one_or_none()
     if not camp:
         raise HTTPException(status_code=404, detail="Campaign not found")
     await db.delete(camp)

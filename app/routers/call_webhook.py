@@ -22,14 +22,11 @@ async def handle_call_webhook(request: Request, db: AsyncSession = Depends(get_d
     if not call:
         raise HTTPException(status_code=404, detail="Call record not found")
 
-    if body.get("status"):
-        call.status = body.get("status")
+    for field in ["status", "recording_url", "transcript"]:
+        if body.get(field):
+            setattr(call, field, body[field])
     if body.get("duration") is not None:
-        call.duration = int(body.get("duration"))
-    if body.get("recording_url"):
-        call.recording_url = body.get("recording_url")
-    if body.get("transcript"):
-        call.transcript = body.get("transcript")
+        call.duration = int(body["duration"])
 
     await db.commit()
     return {"status": "success", "call_id": str(call_id)}
@@ -42,10 +39,7 @@ async def transcribe_call(call_id: uuid.UUID, db: AsyncSession = Depends(get_db)
     if not call.recording_url:
         raise HTTPException(status_code=400, detail="Cannot transcribe: recording_url is missing")
     if not call.transcript:
-        call.transcript = (
-            f"Automated transcription for recording {call.recording_url}: "
-            "Client confirmed interest in 3BHK luxury properties."
-        )
+        call.transcript = f"Automated transcription for recording {call.recording_url}: Client confirmed interest in 3BHK luxury properties."
         await db.commit()
         await db.refresh(call)
     return {"call_id": call_id, "transcript": call.transcript}
