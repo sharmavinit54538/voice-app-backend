@@ -30,9 +30,7 @@ async def create_follow_up(payload: FollowUpCreate, db: AsyncSession = Depends(g
     return fu
 
 @router.patch("/{follow_up_id}", response_model=FollowUpOut)
-async def update_follow_up(
-    follow_up_id: uuid.UUID, payload: FollowUpUpdate, db: AsyncSession = Depends(get_db)
-):
+async def update_follow_up(follow_up_id: uuid.UUID, payload: FollowUpUpdate, db: AsyncSession = Depends(get_db)):
     fu = (await db.execute(select(FollowUp).where(FollowUp.id == follow_up_id))).scalar_one_or_none()
     if not fu:
         raise HTTPException(status_code=404, detail="Follow-up not found")
