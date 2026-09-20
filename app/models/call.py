@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey, func
+from sqlalchemy import Column, String, Integer, Text, Boolean, DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from app.core.database import Base
@@ -17,6 +17,7 @@ class Call(Base):
     transcript = Column(Text, nullable=True)
     call_summary = Column(Text, nullable=True)
     analysis = Column(JSONB, nullable=True)
+    is_self_test = Column(Boolean, default=False, nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
 
     lead = relationship("Lead", back_populates="calls")

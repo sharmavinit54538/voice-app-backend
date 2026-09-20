@@ -24,5 +24,10 @@ class CallUpdate(BaseModel):
 class CallOut(CallCreate):
     id: uuid.UUID
     analysis: Optional[Dict[str, Any]] = None
+    is_self_test: bool = False
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class SelfTestCallRequest(BaseModel):
+    phone_number: str
+

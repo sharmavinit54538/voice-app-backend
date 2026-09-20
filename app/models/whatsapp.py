@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Integer, Text, DateTime, ForeignKey, func
+from sqlalchemy import Column, String, Integer, Text, Boolean, DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.core.database import Base
@@ -11,6 +11,7 @@ class WhatsAppConversation(Base):
     lead_id = Column(UUID(as_uuid=True), ForeignKey("leads.id", ondelete="CASCADE"), nullable=True, index=True)
     phone_number = Column(String(50), nullable=False, unique=True, index=True)
     unread_count = Column(Integer, default=0, nullable=False)
+    is_self_test = Column(Boolean, default=False, nullable=False, index=True)
     last_message_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

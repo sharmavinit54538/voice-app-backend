@@ -4,8 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
+from app.core.dependencies import require_user
+from app.models.user import User
 from app.models.call import Call
-from app.schemas.call import CallCreate, CallOut
+from app.schemas.call import CallCreate, CallOut, SelfTestCallRequest
 
 router = APIRouter(prefix="/api/calls", tags=["Calls"])
 
@@ -14,6 +16,25 @@ async def initiate_call(payload: CallCreate, db: AsyncSession = Depends(get_db))
     call = Call(
         lead_id=payload.lead_id, phone_number=payload.phone_number,
         direction="outbound", status="ongoing", duration=0
+    )
+    db.add(call)
+    await db.commit()
+    await db.refresh(call)
+    return call
+
+@router.post("/self-test", response_model=CallOut)
+async def self_test_call(
+    payload: SelfTestCallRequest,
+    current_user: User = Depends(require_user),
+    db: AsyncSession = Depends(get_db)
+):
+    call = Call(
+        lead_id=None,
+        phone_number=payload.phone_number,
+        direction="outbound",
+        status="ongoing",
+        duration=0,
+        is_self_test=True
     )
     db.add(call)
     await db.commit()

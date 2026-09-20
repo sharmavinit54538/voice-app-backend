@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from . import (
+from app.routers import (
     auth, users, user_management, leads, lead_details,
     lead_comms, lead_schedule, whatsapp_conversations,
     whatsapp_send, whatsapp_template, whatsapp_media,
-    whatsapp_webhook, calls, call_actions, call_media,
+    whatsapp_webhook, calls_read, calls_write, call_actions, call_media,
     call_webhook, call_ai, campaigns, campaign_execution,
     follow_ups, follow_up_actions, site_visits,
     site_visit_actions, projects, notifications, settings,
@@ -18,7 +18,7 @@ ALL_ROUTERS = [
     lead_schedule.router, whatsapp_conversations.router,
     whatsapp_send.router, whatsapp_template.router,
     whatsapp_media.router, whatsapp_webhook.router,
-    calls.router, call_actions.router, call_media.router,
+    calls_read.router, calls_write.router, call_actions.router, call_media.router,
     call_webhook.router, call_ai.router, campaigns.router,
     campaign_execution.router, follow_ups.router,
     follow_up_actions.router, site_visits.router,

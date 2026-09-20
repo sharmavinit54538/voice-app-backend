@@ -13,7 +13,9 @@ router = APIRouter(prefix="/api/analytics", tags=["Analytics"])
 @router.get("/calls")
 async def get_calls_analytics(db: AsyncSession = Depends(get_db)):
     res = await db.execute(
-        select(Call.status, func.count(Call.id), func.coalesce(func.sum(Call.duration), 0)).group_by(Call.status)
+        select(Call.status, func.count(Call.id), func.coalesce(func.sum(Call.duration), 0))
+        .where(Call.is_self_test == False)
+        .group_by(Call.status)
     )
     return {"success": True, "calls_by_status": [{"status": r[0], "count": r[1], "total_seconds": int(r[2])} for r in res.all()]}
 

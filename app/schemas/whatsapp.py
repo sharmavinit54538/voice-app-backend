@@ -41,6 +41,12 @@ class ConversationOut(BaseModel):
     lead_id: Optional[uuid.UUID]
     phone_number: str
     unread_count: int
+    is_self_test: bool = False
     last_message_at: datetime
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+class SelfTestMessageRequest(BaseModel):
+    phone_number: str
+    content: Optional[str] = None
+
