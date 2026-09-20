@@ -4,7 +4,7 @@ from app.core.config import GEMINI_MODEL
 from app.core.database import get_db
 from app.schemas.ai import AIChatRequest, AIGenerateReplyRequest, AISummarizeCallRequest
 from app.services.gemini_client import call_gemini
-from app.routers.call_ai import summarize_call_ai
+from app.services.gemini_service import summarize_call_record
 
 router = APIRouter(prefix="/api/ai", tags=["AI"])
 
@@ -29,4 +29,5 @@ async def ai_generate_reply(payload: AIGenerateReplyRequest):
 async def ai_summarize_call(
     payload: AISummarizeCallRequest, db: AsyncSession = Depends(get_db)
 ):
-    return await summarize_call_ai(payload.call_id, db)
+    return await summarize_call_record(payload.call_id, db)
+
