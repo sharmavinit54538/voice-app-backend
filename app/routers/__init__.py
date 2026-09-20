@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import (
+from . import (
     auth, users, user_management, leads, lead_details,
     lead_comms, lead_schedule, whatsapp_conversations,
     whatsapp_send, whatsapp_template, whatsapp_media,
@@ -10,6 +10,7 @@ from app.routers import (
     ai, ai_suggest, ai_crm, analytics_dashboard,
     analytics_operations, health
 )
+
 
 ALL_ROUTERS = [
     auth.router, users.router, user_management.router,
