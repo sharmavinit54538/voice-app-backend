@@ -1,7 +1,9 @@
 import uuid
 from datetime import datetime
-from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, ConfigDict, Field
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from app.core.phone import normalize_phone_number
+
 
 class MessageCreate(BaseModel):
     conversation_id: Optional[uuid.UUID] = None
@@ -10,6 +12,14 @@ class MessageCreate(BaseModel):
     message_type: Optional[str] = "text"
     media_url: Optional[str] = None
 
+    @field_validator("phone_number")
+    @classmethod
+    def validate_phone(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None:
+            return normalize_phone_number(v)
+        return v
+
+
 class MessageTemplateCreate(BaseModel):
     conversation_id: Optional[uuid.UUID] = None
     phone_number: str
@@ -17,12 +27,26 @@ class MessageTemplateCreate(BaseModel):
     language_code: Optional[str] = "en_US"
     components: Optional[List[Dict[str, Any]]] = None
 
+    @field_validator("phone_number")
+    @classmethod
+    def validate_phone(cls, v: str) -> str:
+        return normalize_phone_number(v)
+
+
 class MessageMediaCreate(BaseModel):
     conversation_id: Optional[uuid.UUID] = None
     phone_number: Optional[str] = None
     media_url: str
     media_type: str = Field(..., description="image, video, audio, or document")
     caption: Optional[str] = None
+
+    @field_validator("phone_number")
+    @classmethod
+    def validate_phone(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None:
+            return normalize_phone_number(v)
+        return v
+
 
 class MessageOut(BaseModel):
     id: uuid.UUID
@@ -36,6 +60,7 @@ class MessageOut(BaseModel):
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
+
 class ConversationOut(BaseModel):
     id: uuid.UUID
     lead_id: Optional[uuid.UUID]
@@ -46,7 +71,12 @@ class ConversationOut(BaseModel):
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
+
 class SelfTestMessageRequest(BaseModel):
     phone_number: str
     content: Optional[str] = None
 
+    @field_validator("phone_number")
+    @classmethod
+    def validate_phone(cls, v: str) -> str:
+        return normalize_phone_number(v)
