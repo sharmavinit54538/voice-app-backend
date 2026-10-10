@@ -1,8 +1,10 @@
 import uuid
-from typing import Any, Dict
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.core.phone import normalize_phone_number
 from app.models.lead import Lead
@@ -32,7 +34,7 @@ async def update_lead(
         raise HTTPException(status_code=404, detail="Lead not found")
 
     update_dict = payload.model_dump(exclude_unset=True)
-    if "phone" in update_dict and update_dict["phone"]:
+    if update_dict.get("phone"):
         norm_phone = normalize_phone_number(update_dict["phone"])
         if norm_phone != lead.phone:
             duplicate = await db.execute(

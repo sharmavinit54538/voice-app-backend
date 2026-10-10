@@ -1,31 +1,33 @@
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 from app.core.phone import normalize_phone_number
 
 
 class MessageCreate(BaseModel):
-    conversation_id: Optional[uuid.UUID] = None
-    phone_number: Optional[str] = None
+    conversation_id: uuid.UUID | None = None
+    phone_number: str | None = None
     content: str
-    message_type: Optional[str] = "text"
-    media_url: Optional[str] = None
+    message_type: str | None = "text"
+    media_url: str | None = None
 
     @field_validator("phone_number")
     @classmethod
-    def validate_phone(cls, v: Optional[str]) -> Optional[str]:
+    def validate_phone(cls, v: str | None) -> str | None:
         if v is not None:
             return normalize_phone_number(v)
         return v
 
 
 class MessageTemplateCreate(BaseModel):
-    conversation_id: Optional[uuid.UUID] = None
+    conversation_id: uuid.UUID | None = None
     phone_number: str
     template_name: str
-    language_code: Optional[str] = "en_US"
-    components: Optional[List[Dict[str, Any]]] = None
+    language_code: str | None = "en_US"
+    components: list[dict[str, Any]] | None = None
 
     @field_validator("phone_number")
     @classmethod
@@ -34,15 +36,15 @@ class MessageTemplateCreate(BaseModel):
 
 
 class MessageMediaCreate(BaseModel):
-    conversation_id: Optional[uuid.UUID] = None
-    phone_number: Optional[str] = None
+    conversation_id: uuid.UUID | None = None
+    phone_number: str | None = None
     media_url: str
     media_type: str = Field(..., description="image, video, audio, or document")
-    caption: Optional[str] = None
+    caption: str | None = None
 
     @field_validator("phone_number")
     @classmethod
-    def validate_phone(cls, v: Optional[str]) -> Optional[str]:
+    def validate_phone(cls, v: str | None) -> str | None:
         if v is not None:
             return normalize_phone_number(v)
         return v
@@ -54,16 +56,16 @@ class MessageOut(BaseModel):
     sender: str
     content: str
     message_type: str
-    media_url: Optional[str]
+    media_url: str | None
     status: str
-    external_message_id: Optional[str]
+    external_message_id: str | None
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
 
 class ConversationOut(BaseModel):
     id: uuid.UUID
-    lead_id: Optional[uuid.UUID]
+    lead_id: uuid.UUID | None
     phone_number: str
     unread_count: int
     is_self_test: bool = False
@@ -74,7 +76,7 @@ class ConversationOut(BaseModel):
 
 class SelfTestMessageRequest(BaseModel):
     phone_number: str
-    content: Optional[str] = None
+    content: str | None = None
 
     @field_validator("phone_number")
     @classmethod

@@ -1,14 +1,16 @@
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any
+
 from fastapi import HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.models.call import Call
 from app.services.gemini_client import call_gemini
 
 
 async def suggest_whatsapp_reply(
-    history: str, instruction: Optional[str] = None
+    history: str, instruction: str | None = None
 ) -> str:
     system_inst = (
         "You are a polite, helpful real estate assistant replying to a prospective lead over WhatsApp."
@@ -43,7 +45,7 @@ async def summarize_call_transcript(transcript: str) -> str:
     return await call_gemini(prompt, system_instruction=system_inst)
 
 
-async def summarize_call_record(call_id: uuid.UUID, db: AsyncSession) -> Dict[str, Any]:
+async def summarize_call_record(call_id: uuid.UUID, db: AsyncSession) -> dict[str, Any]:
     res = await db.execute(select(Call).where(Call.id == call_id))
     call = res.scalar_one_or_none()
     if not call:

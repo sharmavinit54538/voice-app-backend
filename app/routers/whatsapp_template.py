@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.core.phone import normalize_phone_number
 from app.models.whatsapp import WhatsAppConversation, WhatsAppMessage

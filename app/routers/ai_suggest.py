@@ -1,7 +1,9 @@
-from typing import Any, Dict
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.config import GEMINI_MODEL
 from app.core.database import get_db
 from app.core.exceptions import AIServiceError
@@ -15,7 +17,7 @@ router = APIRouter(prefix="/api/ai", tags=["AI"])
 @router.post("/whatsapp/suggest-reply")
 async def ai_suggest_reply(
     payload: AIReplyRequest, db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     res = await db.execute(
         select(WhatsAppMessage)
         .where(WhatsAppMessage.conversation_id == payload.conversation_id)

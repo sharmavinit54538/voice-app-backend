@@ -1,21 +1,22 @@
 import uuid
 from datetime import datetime
-from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
+
 
 class ProjectCreate(BaseModel):
     name: str
-    location: Optional[str] = None
-    description: Optional[str] = None
-    status: Optional[str] = "active"
-    price_range: Optional[str] = None
+    location: str | None = None
+    description: str | None = None
+    status: str | None = "active"
+    price_range: str | None = None
 
 class ProjectUpdate(BaseModel):
-    name: Optional[str] = None
-    location: Optional[str] = None
-    description: Optional[str] = None
-    status: Optional[str] = None
-    price_range: Optional[str] = None
+    name: str | None = None
+    location: str | None = None
+    description: str | None = None
+    status: str | None = None
+    price_range: str | None = None
 
 class ProjectOut(ProjectCreate):
     id: uuid.UUID

@@ -1,13 +1,15 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.future import select
+
+import app.models
 from app.core.config import CORS_ORIGINS
 from app.core.database import AsyncSessionLocal, Base, engine
 from app.core.exceptions import AIServiceError, InvalidPhoneNumberError
 from app.core.security import hash_password
-import app.models  # noqa: F401
 from app.models.user import User
 from app.routers import register_routers
 
@@ -51,7 +53,7 @@ app.add_middleware(
 
 @app.exception_handler(AIServiceError)
 async def ai_service_error_handler(
-    request: Request, exc: AIServiceError  # noqa: ARG001
+    request: Request, exc: AIServiceError
 ) -> JSONResponse:
     return JSONResponse(
         status_code=exc.status_code,
@@ -61,7 +63,7 @@ async def ai_service_error_handler(
 
 @app.exception_handler(InvalidPhoneNumberError)
 async def invalid_phone_error_handler(
-    request: Request, exc: InvalidPhoneNumberError  # noqa: ARG001
+    request: Request, exc: InvalidPhoneNumberError
 ) -> JSONResponse:
     return JSONResponse(
         status_code=400,

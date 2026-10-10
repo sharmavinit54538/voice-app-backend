@@ -1,7 +1,9 @@
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
-from sqlalchemy.future import select
+
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.models.campaign import Campaign
 from app.services.campaign_service import execute_campaign_task

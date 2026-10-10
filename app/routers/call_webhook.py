@@ -1,8 +1,10 @@
 import uuid
-from typing import Any, Dict
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.models.call import Call
 
@@ -12,7 +14,7 @@ router = APIRouter(prefix="/api/calls", tags=["Calls"])
 @router.post("/webhook")
 async def handle_call_webhook(
     request: Request, db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     body = await request.json()
     call_id_raw = body.get("call_id") or body.get("id")
     if not call_id_raw:
@@ -45,7 +47,7 @@ async def handle_call_webhook(
 @router.post("/{call_id}/transcribe")
 async def transcribe_call(
     call_id: uuid.UUID, db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     call = (
         await db.execute(select(Call).where(Call.id == call_id))
     ).scalar_one_or_none()

@@ -1,16 +1,17 @@
 import uuid
-from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import update
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.models.notification import Notification
 from app.schemas.notification import NotificationOut
 
 router = APIRouter(prefix="/api/notifications", tags=["Notifications"])
 
-@router.get("", response_model=List[NotificationOut])
+@router.get("", response_model=list[NotificationOut])
 async def list_notifications(
     unread_only: bool = False, db: AsyncSession = Depends(get_db)
 ):

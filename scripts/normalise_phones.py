@@ -10,7 +10,9 @@ Usage:
 import argparse
 import asyncio
 from collections import defaultdict
+
 from sqlalchemy.future import select
+
 from app.core.database import AsyncSessionLocal
 from app.core.phone import normalize_phone_number
 from app.models.lead import Lead

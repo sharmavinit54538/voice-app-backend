@@ -1,7 +1,10 @@
 import uuid
-from sqlalchemy import Column, String, Text, DateTime, func
+
+from sqlalchemy import Column, DateTime, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
+
 from app.core.database import Base
+
 
 class Project(Base):
     __tablename__ = "projects"

@@ -1,7 +1,9 @@
-from typing import Any, Dict
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.config import GEMINI_MODEL
 from app.core.database import get_db
 from app.core.exceptions import AIServiceError
@@ -20,7 +22,7 @@ async def ai_extract_lead(
     text: str = Query(
         ..., description="Raw text containing lead contact information"
     ),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     try:
         extracted = await extract_lead_from_text(text)
         return {"model": GEMINI_MODEL, "extracted_data": extracted}
@@ -33,7 +35,7 @@ async def ai_extract_lead(
 @router.post("/summarize-conversation")
 async def ai_summarize_conversation(
     payload: AISummarizeConversationRequest, db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     res = await db.execute(
         select(WhatsAppMessage)
         .where(WhatsAppMessage.conversation_id == payload.conversation_id)

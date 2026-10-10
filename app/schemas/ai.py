@@ -1,18 +1,19 @@
 import uuid
-from typing import Optional
+
 from pydantic import BaseModel
+
 
 class AIChatRequest(BaseModel):
     prompt: str
-    system_prompt: Optional[str] = None
+    system_prompt: str | None = None
 
 class AIReplyRequest(BaseModel):
     conversation_id: uuid.UUID
-    instruction: Optional[str] = None
+    instruction: str | None = None
 
 class AIGenerateReplyRequest(BaseModel):
     context: str
-    instruction: Optional[str] = None
+    instruction: str | None = None
 
 class AISummarizeConversationRequest(BaseModel):
     conversation_id: uuid.UUID

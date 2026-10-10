@@ -1,8 +1,10 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import update
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.core.phone import normalize_phone_number
 from app.models.lead import Lead
@@ -98,7 +100,7 @@ async def send_whatsapp_media(
     await db.execute(
         update(WhatsAppConversation)
         .where(WhatsAppConversation.id == conv_id)
-        .values(last_message_at=datetime.now(timezone.utc))
+        .values(last_message_at=datetime.now(UTC))
     )
     await db.commit()
     await db.refresh(msg)

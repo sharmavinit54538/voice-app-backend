@@ -1,10 +1,10 @@
 import re
-from typing import Optional
+
 from app.core.exceptions import InvalidPhoneNumberError
 
 
 def normalize_phone_number(
-    phone: Optional[str], default_country_code: str = "+91"
+    phone: str | None, default_country_code: str = "+91"
 ) -> str:
     """
     Normalises phone numbers to E.164 standard format.
@@ -107,7 +107,7 @@ def normalize_phone_number(
     )
 
 
-def is_valid_phone_number(phone: Optional[str]) -> bool:
+def is_valid_phone_number(phone: str | None) -> bool:
     """Helper to check if a phone number can be normalized."""
     try:
         normalize_phone_number(phone)

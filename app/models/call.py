@@ -1,4 +1,5 @@
 import uuid
+
 from sqlalchemy import (
     Boolean,
     Column,
@@ -11,6 +12,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
+
 from app.core.database import Base
 
 

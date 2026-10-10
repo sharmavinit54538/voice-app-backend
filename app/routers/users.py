@@ -1,17 +1,18 @@
 import uuid
-from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
-from app.core.security import hash_password
 from app.core.dependencies import require_owner
+from app.core.security import hash_password
 from app.models.user import User
 from app.schemas.user import UserCreate, UserOut
 
 router = APIRouter(prefix="/api/users", tags=["Users"])
 
-@router.get("", response_model=List[UserOut])
+@router.get("", response_model=list[UserOut])
 async def list_users(_: User = Depends(require_owner), db: AsyncSession = Depends(get_db)):
     res = await db.execute(select(User).order_by(User.created_at.desc()))
     return res.scalars().all()

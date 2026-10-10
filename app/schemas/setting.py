@@ -1,6 +1,8 @@
-from typing import Dict, Any
+from typing import Any
+
 from pydantic import BaseModel
+
 
 class SettingUpdate(BaseModel):
     key: str
-    value: Dict[str, Any]
+    value: dict[str, Any]

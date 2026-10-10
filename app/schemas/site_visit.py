@@ -1,23 +1,24 @@
 import uuid
 from datetime import datetime
-from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
+
 
 class SiteVisitCreate(BaseModel):
     lead_id: uuid.UUID
     project_name: str
     visit_date: datetime
-    notes: Optional[str] = None
+    notes: str | None = None
 
 class SiteVisitUpdate(BaseModel):
-    project_name: Optional[str] = None
-    visit_date: Optional[datetime] = None
-    status: Optional[str] = None
-    notes: Optional[str] = None
+    project_name: str | None = None
+    visit_date: datetime | None = None
+    status: str | None = None
+    notes: str | None = None
 
 class SiteVisitReschedule(BaseModel):
     visit_date: datetime
-    notes: Optional[str] = None
+    notes: str | None = None
 
 class SiteVisitOut(SiteVisitCreate):
     id: uuid.UUID

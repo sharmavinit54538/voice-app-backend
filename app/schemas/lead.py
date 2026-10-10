@@ -1,18 +1,19 @@
 import uuid
 from datetime import datetime
-from typing import List, Optional
+
 from pydantic import BaseModel, ConfigDict, field_validator
+
 from app.core.phone import normalize_phone_number
 
 
 class LeadCreate(BaseModel):
     name: str
     phone: str
-    email: Optional[str] = None
-    status: Optional[str] = "new"
-    source: Optional[str] = "direct"
-    assigned_to: Optional[str] = None
-    notes: Optional[str] = None
+    email: str | None = None
+    status: str | None = "new"
+    source: str | None = "direct"
+    assigned_to: str | None = None
+    notes: str | None = None
 
     @field_validator("phone")
     @classmethod
@@ -21,17 +22,17 @@ class LeadCreate(BaseModel):
 
 
 class LeadUpdate(BaseModel):
-    name: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    status: Optional[str] = None
-    source: Optional[str] = None
-    assigned_to: Optional[str] = None
-    notes: Optional[str] = None
+    name: str | None = None
+    phone: str | None = None
+    email: str | None = None
+    status: str | None = None
+    source: str | None = None
+    assigned_to: str | None = None
+    notes: str | None = None
 
     @field_validator("phone")
     @classmethod
-    def validate_phone(cls, v: Optional[str]) -> Optional[str]:
+    def validate_phone(cls, v: str | None) -> str | None:
         if v is not None:
             return normalize_phone_number(v)
         return v
@@ -48,4 +49,4 @@ class PaginatedLeads(BaseModel):
     total: int
     page: int
     page_size: int
-    data: List[LeadOut]
+    data: list[LeadOut]

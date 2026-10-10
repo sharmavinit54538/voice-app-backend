@@ -1,17 +1,18 @@
 import asyncio
 import logging
-from typing import Optional
+
 from google import genai
 from google.genai import types
+
 from app.core.config import GEMINI_API_KEY, GEMINI_MODEL
 from app.core.exceptions import AIServiceError
 
 logger = logging.getLogger(__name__)
 
-_client: Optional[genai.Client] = None
+_client: genai.Client | None = None
 
 
-def get_gemini_client() -> Optional[genai.Client]:
+def get_gemini_client() -> genai.Client | None:
     global _client
     if _client is None and GEMINI_API_KEY:
         _client = genai.Client(api_key=GEMINI_API_KEY)
@@ -20,8 +21,8 @@ def get_gemini_client() -> Optional[genai.Client]:
 
 async def call_gemini(
     prompt: str,
-    system_instruction: Optional[str] = None,
-    model: Optional[str] = None,
+    system_instruction: str | None = None,
+    model: str | None = None,
     max_retries: int = 3,
     timeout_seconds: float = 30.0,
 ) -> str:
@@ -49,7 +50,7 @@ async def call_gemini(
             system_instruction=system_instruction
         )
 
-    last_error: Optional[Exception] = None
+    last_error: Exception | None = None
 
     for attempt in range(max_retries):
         try:
@@ -62,7 +63,7 @@ async def call_gemini(
             )
             result_text = response.text.strip() if response.text else ""
             return result_text
-        except asyncio.TimeoutError as exc:
+        except TimeoutError as exc:
             last_error = exc
             logger.warning(
                 "Gemini request timed out on attempt %d/%d",
@@ -82,6 +83,6 @@ async def call_gemini(
             backoff_delay = 0.5 * (2**attempt)  # 0.5s, 1.0s, 2.0s
             await asyncio.sleep(backoff_delay)
 
-    error_msg = f"Gemini API call failed after {max_retries} attempts: {str(last_error)}"
+    error_msg = f"Gemini API call failed after {max_retries} attempts: {last_error!s}"
     logger.error(error_msg)
     raise AIServiceError(error_msg, status_code=502)

@@ -1,8 +1,20 @@
 import uuid
-from sqlalchemy import Column, String, Integer, Text, Boolean, DateTime, ForeignKey, func
+
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    func,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
 from app.core.database import Base
+
 
 class WhatsAppConversation(Base):
     __tablename__ = "whatsapp_conversations"

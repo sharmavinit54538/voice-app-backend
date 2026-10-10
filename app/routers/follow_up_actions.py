@@ -1,8 +1,10 @@
 import uuid
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import update
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.models.follow_up import FollowUp
 

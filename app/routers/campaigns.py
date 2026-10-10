@@ -1,8 +1,10 @@
 import uuid
-from typing import Any, Dict, List
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.core.phone import normalize_phone_number
 from app.models.campaign import Campaign, CampaignRecipient
@@ -11,10 +13,10 @@ from app.schemas.campaign import CampaignCreate, CampaignOut
 router = APIRouter(prefix="/api/campaigns", tags=["Campaigns"])
 
 
-@router.get("", response_model=List[CampaignOut])
+@router.get("", response_model=list[CampaignOut])
 async def list_campaigns(
     db: AsyncSession = Depends(get_db),
-) -> List[Campaign]:
+) -> list[Campaign]:
     res = await db.execute(
         select(Campaign).order_by(Campaign.created_at.desc())
     )
@@ -67,7 +69,7 @@ async def create_campaign(
 @router.delete("/{campaign_id}")
 async def delete_campaign(
     campaign_id: uuid.UUID, db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     camp = (
         await db.execute(
             select(Campaign).where(Campaign.id == campaign_id)

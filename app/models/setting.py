@@ -1,6 +1,8 @@
-from sqlalchemy import Column, String, Boolean, DateTime, func
+from sqlalchemy import Boolean, Column, DateTime, String, func
 from sqlalchemy.dialects.postgresql import JSONB
+
 from app.core.database import Base
+
 
 class Setting(Base):
     __tablename__ = "settings"

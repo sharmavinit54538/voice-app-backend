@@ -1,8 +1,9 @@
 import uuid
-from typing import List
+
 from fastapi import APIRouter, Depends
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.models.follow_up import FollowUp
 from app.models.site_visit import SiteVisit
@@ -11,7 +12,7 @@ from app.schemas.site_visit import SiteVisitOut
 
 router = APIRouter(prefix="/api/leads", tags=["Leads"])
 
-@router.get("/{lead_id}/follow-ups", response_model=List[FollowUpOut])
+@router.get("/{lead_id}/follow-ups", response_model=list[FollowUpOut])
 async def get_lead_follow_ups(
     lead_id: uuid.UUID, db: AsyncSession = Depends(get_db)
 ):
@@ -20,7 +21,7 @@ async def get_lead_follow_ups(
     )
     return res.scalars().all()
 
-@router.get("/{lead_id}/site-visits", response_model=List[SiteVisitOut])
+@router.get("/{lead_id}/site-visits", response_model=list[SiteVisitOut])
 async def get_lead_site_visits(
     lead_id: uuid.UUID, db: AsyncSession = Depends(get_db)
 ):

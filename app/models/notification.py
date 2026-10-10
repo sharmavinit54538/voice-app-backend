@@ -1,7 +1,10 @@
 import uuid
-from sqlalchemy import Column, String, Text, Boolean, DateTime, func
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+
+from sqlalchemy import Boolean, Column, DateTime, String, Text, func
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+
 from app.core.database import Base
+
 
 class Notification(Base):
     __tablename__ = "notifications"

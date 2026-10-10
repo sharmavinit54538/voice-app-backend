@@ -1,16 +1,40 @@
 from fastapi import FastAPI
-from app.routers import (
-    auth, users, user_management, leads, lead_details,
-    lead_comms, lead_schedule, whatsapp_conversations,
-    whatsapp_send, whatsapp_template, whatsapp_media,
-    whatsapp_webhook, calls_read, calls_write, call_actions, call_media,
-    call_webhook, call_ai, campaigns, campaign_execution,
-    follow_ups, follow_up_actions, site_visits,
-    site_visit_actions, projects, notifications, settings,
-    ai, ai_suggest, ai_crm, analytics_dashboard,
-    analytics_operations, health
-)
 
+from app.routers import (
+    ai,
+    ai_crm,
+    ai_suggest,
+    analytics_dashboard,
+    analytics_operations,
+    auth,
+    call_actions,
+    call_ai,
+    call_media,
+    call_webhook,
+    calls_read,
+    calls_write,
+    campaign_execution,
+    campaigns,
+    follow_up_actions,
+    follow_ups,
+    health,
+    lead_comms,
+    lead_details,
+    lead_schedule,
+    leads,
+    notifications,
+    projects,
+    settings,
+    site_visit_actions,
+    site_visits,
+    user_management,
+    users,
+    whatsapp_conversations,
+    whatsapp_media,
+    whatsapp_send,
+    whatsapp_template,
+    whatsapp_webhook,
+)
 
 ALL_ROUTERS = [
     auth.router, users.router, user_management.router,

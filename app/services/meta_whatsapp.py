@@ -1,6 +1,8 @@
-from typing import Any, Dict
+from typing import Any
+
 import httpx
 from fastapi import HTTPException, status
+
 from app.core.config import (
     WHATSAPP_ACCESS_TOKEN,
     WHATSAPP_API_VERSION,
@@ -11,7 +13,7 @@ from app.core.phone import normalize_phone_number
 
 async def send_meta_whatsapp_message(
     to_phone: str, payload_data: dict
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     if not WHATSAPP_ACCESS_TOKEN or not WHATSAPP_PHONE_NUMBER_ID:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

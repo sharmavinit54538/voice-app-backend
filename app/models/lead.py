@@ -1,8 +1,11 @@
 import uuid
-from sqlalchemy import Column, String, Text, DateTime, func
+
+from sqlalchemy import Column, DateTime, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
 from app.core.database import Base
+
 
 class Lead(Base):
     __tablename__ = "leads"

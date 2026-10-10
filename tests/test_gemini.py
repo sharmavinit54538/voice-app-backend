@@ -1,7 +1,9 @@
 from unittest.mock import patch
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.exceptions import AIServiceError
 from app.models.call import Call
 from app.services.gemini_client import call_gemini

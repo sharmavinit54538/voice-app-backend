@@ -1,11 +1,14 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from sqlalchemy import update
 from sqlalchemy.future import select
+
 from app.core.config import WHATSAPP_ACCESS_TOKEN
 from app.core.database import AsyncSessionLocal
 from app.models.campaign import Campaign, CampaignRecipient
 from app.services.meta_whatsapp import send_meta_whatsapp_message
+
 
 async def execute_campaign_task(c_id: uuid.UUID, template_name: str):
     async with AsyncSessionLocal() as session:
@@ -30,7 +33,7 @@ async def execute_campaign_task(c_id: uuid.UUID, template_name: str):
                 meta_res = await send_meta_whatsapp_message(rec.phone_number, meta_payload)
                 rec.status = "sent"
                 rec.external_message_id = meta_res.get("messages", [{}])[0].get("id")
-                rec.sent_at = datetime.now(timezone.utc)
+                rec.sent_at = datetime.now(UTC)
                 delivered += 1
             except Exception as ex:
                 rec.status, rec.error_message = "failed", str(ex)

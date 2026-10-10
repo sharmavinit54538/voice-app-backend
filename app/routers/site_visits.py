@@ -1,15 +1,16 @@
 import uuid
-from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.models.site_visit import SiteVisit
-from app.schemas.site_visit import SiteVisitCreate, SiteVisitUpdate, SiteVisitOut
+from app.schemas.site_visit import SiteVisitCreate, SiteVisitOut, SiteVisitUpdate
 
 router = APIRouter(prefix="/api/site-visits", tags=["Site Visits"])
 
-@router.get("", response_model=List[SiteVisitOut])
+@router.get("", response_model=list[SiteVisitOut])
 async def list_site_visits(db: AsyncSession = Depends(get_db)):
     res = await db.execute(select(SiteVisit).order_by(SiteVisit.visit_date.desc()))
     return res.scalars().all()

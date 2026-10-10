@@ -1,7 +1,8 @@
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.models.lead import Lead
 from app.models.whatsapp import WhatsAppConversation, WhatsAppMessage
 

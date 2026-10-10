@@ -1,16 +1,17 @@
-from typing import Optional
+
 from sqlalchemy import asc, desc, or_
 from sqlalchemy.future import select
 from sqlalchemy.sql import Select
+
 from app.core.phone import normalize_phone_number
 from app.models.lead import Lead
 
 
 def build_leads_query(
-    search: Optional[str] = None,
-    status: Optional[str] = None,
-    source: Optional[str] = None,
-    assigned_to: Optional[str] = None,
+    search: str | None = None,
+    status: str | None = None,
+    source: str | None = None,
+    assigned_to: str | None = None,
     sort_by: str = "created_at",
     sort_order: str = "desc",
 ) -> Select:

@@ -1,15 +1,16 @@
 import uuid
-from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.models.follow_up import FollowUp
-from app.schemas.follow_up import FollowUpCreate, FollowUpUpdate, FollowUpOut
+from app.schemas.follow_up import FollowUpCreate, FollowUpOut, FollowUpUpdate
 
 router = APIRouter(prefix="/api/follow-ups", tags=["Follow-ups"])
 
-@router.get("", response_model=List[FollowUpOut])
+@router.get("", response_model=list[FollowUpOut])
 async def list_follow_ups(db: AsyncSession = Depends(get_db)):
     res = await db.execute(select(FollowUp).order_by(FollowUp.scheduled_at.desc()))
     return res.scalars().all()

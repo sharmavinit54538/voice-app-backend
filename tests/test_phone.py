@@ -1,4 +1,5 @@
 import pytest
+
 from app.core.exceptions import InvalidPhoneNumberError
 from app.core.phone import is_valid_phone_number, normalize_phone_number
 from app.schemas.call import CallCreate

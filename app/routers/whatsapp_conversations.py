@@ -1,16 +1,17 @@
 import uuid
-from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import update
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.models.whatsapp import WhatsAppConversation, WhatsAppMessage
 from app.schemas.whatsapp import ConversationOut, MessageOut
 
 router = APIRouter(prefix="/api/whatsapp", tags=["WhatsApp"])
 
-@router.get("/conversations", response_model=List[ConversationOut])
+@router.get("/conversations", response_model=list[ConversationOut])
 async def get_conversations(db: AsyncSession = Depends(get_db)):
     res = await db.execute(select(WhatsAppConversation).order_by(WhatsAppConversation.last_message_at.desc()))
     return res.scalars().all()
@@ -22,7 +23,7 @@ async def get_single_conversation(conversation_id: uuid.UUID, db: AsyncSession =
         raise HTTPException(status_code=404, detail="Conversation not found")
     return conv
 
-@router.get("/conversations/{conversation_id}/messages", response_model=List[MessageOut])
+@router.get("/conversations/{conversation_id}/messages", response_model=list[MessageOut])
 async def get_conversation_messages(conversation_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     res = await db.execute(select(WhatsAppMessage).where(WhatsAppMessage.conversation_id == conversation_id).order_by(WhatsAppMessage.created_at.asc()))
     return res.scalars().all()

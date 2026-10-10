@@ -1,12 +1,14 @@
 import uuid
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
-from app.core.security import hash_password
 from app.core.dependencies import require_owner
+from app.core.security import hash_password
 from app.models.user import User
-from app.schemas.user import UserUpdate, UserOut
+from app.schemas.user import UserOut, UserUpdate
 
 router = APIRouter(prefix="/api/users", tags=["Users"])
 

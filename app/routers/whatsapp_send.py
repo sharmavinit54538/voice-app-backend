@@ -1,8 +1,10 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import update
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.core.dependencies import require_user
 from app.core.phone import normalize_phone_number
@@ -89,7 +91,7 @@ async def send_whatsapp_message(
     await db.execute(
         update(WhatsAppConversation)
         .where(WhatsAppConversation.id == conv_id)
-        .values(last_message_at=datetime.now(timezone.utc))
+        .values(last_message_at=datetime.now(UTC))
     )
     await db.commit()
     await db.refresh(msg)
@@ -143,7 +145,7 @@ async def send_self_test_whatsapp_message(
     await db.execute(
         update(WhatsAppConversation)
         .where(WhatsAppConversation.id == conv.id)
-        .values(last_message_at=datetime.now(timezone.utc))
+        .values(last_message_at=datetime.now(UTC))
     )
     await db.commit()
     await db.refresh(msg)

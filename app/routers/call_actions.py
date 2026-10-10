@@ -1,9 +1,11 @@
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from datetime import UTC, datetime
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.core.dependencies import require_user
 from app.core.phone import normalize_phone_number
@@ -18,7 +20,7 @@ router = APIRouter(prefix="/api/calls", tags=["Calls"])
 async def initiate_call(
     payload: CallCreate, db: AsyncSession = Depends(get_db)
 ) -> Call:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     normalized_phone = normalize_phone_number(payload.phone_number)
     call = Call(
         lead_id=payload.lead_id,
@@ -37,10 +39,10 @@ async def initiate_call(
 @router.post("/self-test", response_model=CallOut)
 async def self_test_call(
     payload: SelfTestCallRequest,
-    current_user: User = Depends(require_user),  # noqa: ARG001
+    current_user: User = Depends(require_user),
     db: AsyncSession = Depends(get_db),
 ) -> Call:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     normalized_phone = normalize_phone_number(payload.phone_number)
     call = Call(
         lead_id=None,
@@ -60,11 +62,11 @@ async def self_test_call(
 @router.post("/{call_id}/end", response_model=CallOut)
 async def end_call(
     call_id: uuid.UUID,
-    duration: Optional[int] = Query(
+    duration: int | None = Query(
         None,
         ge=0,
         description="Ignored by server; duration is computed from timestamps",
-    ),  # noqa: ARG001
+    ),
     db: AsyncSession = Depends(get_db),
 ) -> Call:
     call = (
@@ -73,14 +75,14 @@ async def end_call(
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     call.ended_at = now
     call.status = "completed"
 
     start_reference = call.started_at or call.created_at or now
     # Ensure start_reference has timezone
     if start_reference.tzinfo is None:
-        start_reference = start_reference.replace(tzinfo=timezone.utc)
+        start_reference = start_reference.replace(tzinfo=UTC)
 
     computed_duration = max(0, int((now - start_reference).total_seconds()))
     call.duration = computed_duration
@@ -93,7 +95,7 @@ async def end_call(
 @router.get("/{call_id}/status")
 async def get_call_status(
     call_id: uuid.UUID, db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     res = await db.execute(
         select(Call.status, Call.duration).where(Call.id == call_id)
     )

@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy import func
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
-from app.models.lead import Lead
 from app.models.call import Call
-from app.models.whatsapp import WhatsAppConversation, WhatsAppMessage
-from app.models.site_visit import SiteVisit
 from app.models.campaign import Campaign
+from app.models.lead import Lead
+from app.models.site_visit import SiteVisit
+from app.models.whatsapp import WhatsAppConversation, WhatsAppMessage
 
 router = APIRouter(prefix="/api/analytics", tags=["Analytics"])
 

@@ -1,6 +1,8 @@
-from typing import Any, Dict
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.config import GEMINI_MODEL
 from app.core.database import get_db
 from app.core.exceptions import AIServiceError
@@ -16,7 +18,7 @@ router = APIRouter(prefix="/api/ai", tags=["AI"])
 
 
 @router.post("/chat")
-async def ai_chat(payload: AIChatRequest) -> Dict[str, Any]:
+async def ai_chat(payload: AIChatRequest) -> dict[str, Any]:
     try:
         reply = await call_gemini(
             payload.prompt, system_instruction=payload.system_prompt
@@ -29,7 +31,7 @@ async def ai_chat(payload: AIChatRequest) -> Dict[str, Any]:
 
 
 @router.post("/generate-reply")
-async def ai_generate_reply(payload: AIGenerateReplyRequest) -> Dict[str, Any]:
+async def ai_generate_reply(payload: AIGenerateReplyRequest) -> dict[str, Any]:
     prompt = (
         f"Context:\n{payload.context}\n\n"
         f"Instruction: {payload.instruction or 'Generate an appropriate response'}\n\n"
@@ -50,7 +52,7 @@ async def ai_generate_reply(payload: AIGenerateReplyRequest) -> Dict[str, Any]:
 @router.post("/summarize-call")
 async def ai_summarize_call(
     payload: AISummarizeCallRequest, db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     try:
         return await summarize_call_record(payload.call_id, db)
     except AIServiceError as exc:

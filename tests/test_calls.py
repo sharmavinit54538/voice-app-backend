@@ -1,8 +1,10 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.models.call import Call
 
 
@@ -39,7 +41,7 @@ async def test_end_call_computes_duration_on_server_and_ignores_query_param(
     client: AsyncClient, db_session: AsyncSession
 ):
     # 1. Create a Call that started 45 seconds ago
-    started_time = datetime.now(timezone.utc) - timedelta(seconds=45)
+    started_time = datetime.now(UTC) - timedelta(seconds=45)
     call = Call(
         phone_number="+919876543210",
         direction="outbound",

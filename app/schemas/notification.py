@@ -1,7 +1,9 @@
 import uuid
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict
+
 
 class NotificationOut(BaseModel):
     id: uuid.UUID
@@ -9,6 +11,6 @@ class NotificationOut(BaseModel):
     message: str
     event_type: str
     is_read: bool
-    data: Optional[Dict[str, Any]]
+    data: dict[str, Any] | None
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)

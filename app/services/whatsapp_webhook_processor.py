@@ -1,8 +1,10 @@
-from datetime import datetime, timezone
-from typing import Any, Dict, List
+from datetime import UTC, datetime
+from typing import Any
+
 from sqlalchemy import update
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.phone import normalize_phone_number
 from app.models.campaign import CampaignRecipient
 from app.models.lead import Lead
@@ -11,7 +13,7 @@ from app.models.whatsapp import WhatsAppConversation, WhatsAppMessage
 
 
 async def handle_webhook_statuses(
-    statuses: List[Dict[str, Any]], db: AsyncSession
+    statuses: list[dict[str, Any]], db: AsyncSession
 ) -> None:
     for st in statuses:
         ext_id, new_status = st.get("id"), st.get("status")
@@ -29,7 +31,7 @@ async def handle_webhook_statuses(
 
 
 async def handle_webhook_messages(
-    messages: List[Dict[str, Any]], db: AsyncSession
+    messages: list[dict[str, Any]], db: AsyncSession
 ) -> None:
     for m in messages:
         msg_id, raw_sender_phone = m.get("id"), m.get("from")
@@ -97,7 +99,7 @@ async def handle_webhook_messages(
             await db.flush()
         else:
             conv.unread_count += 1
-            conv.last_message_at = datetime.now(timezone.utc)
+            conv.last_message_at = datetime.now(UTC)
 
         db.add(
             WhatsAppMessage(

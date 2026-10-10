@@ -1,9 +1,11 @@
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict
+from datetime import UTC, datetime
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.core.exceptions import AIServiceError
 from app.models.call import Call
@@ -40,7 +42,7 @@ async def analyze_call_ai(
     call.call_summary = ai_res
     call.analysis = {
         "raw_analysis": ai_res,
-        "analyzed_at": datetime.now(timezone.utc).isoformat(),
+        "analyzed_at": datetime.now(UTC).isoformat(),
     }
     await db.commit()
     await db.refresh(call)
@@ -50,7 +52,7 @@ async def analyze_call_ai(
 @router.post("/{call_id}/ai-summary")
 async def summarize_call_ai(
     call_id: uuid.UUID, db: AsyncSession = Depends(get_db)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     try:
         return await summarize_call_record(call_id, db)
     except AIServiceError as exc:

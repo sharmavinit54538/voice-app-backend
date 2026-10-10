@@ -1,8 +1,9 @@
-from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from app.core.database import get_db
 from app.core.phone import normalize_phone_number
 from app.models.lead import Lead
@@ -16,10 +17,10 @@ router = APIRouter(prefix="/api/leads", tags=["Leads"])
 async def get_leads(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
-    search: Optional[str] = None,
-    status: Optional[str] = None,
-    source: Optional[str] = None,
-    assigned_to: Optional[str] = None,
+    search: str | None = None,
+    status: str | None = None,
+    source: str | None = None,
+    assigned_to: str | None = None,
     sort_by: str = "created_at",
     sort_order: str = "desc",
     db: AsyncSession = Depends(get_db),

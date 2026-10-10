@@ -1,19 +1,20 @@
 import uuid
 from datetime import datetime
-from typing import Optional
+
 from pydantic import BaseModel, ConfigDict, EmailStr
+
 
 class UserCreate(BaseModel):
     email: EmailStr
     full_name: str
     password: str
-    role: Optional[str] = "ADMIN"
+    role: str | None = "ADMIN"
 
 class UserUpdate(BaseModel):
-    full_name: Optional[str] = None
-    password: Optional[str] = None
-    role: Optional[str] = None
-    is_active: Optional[bool] = None
+    full_name: str | None = None
+    password: str | None = None
+    role: str | None = None
+    is_active: bool | None = None
 
 class UserOut(BaseModel):
     id: uuid.UUID

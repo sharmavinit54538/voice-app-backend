@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.config import WHATSAPP_VERIFY_TOKEN
 from app.core.database import get_db
 from app.services.whatsapp_webhook_processor import (
-    handle_webhook_statuses, handle_webhook_messages
+    handle_webhook_messages,
+    handle_webhook_statuses,
 )
 
 router = APIRouter(prefix="/api/whatsapp", tags=["WhatsApp"])
