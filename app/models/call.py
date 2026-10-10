@@ -1,14 +1,29 @@
 import uuid
-from sqlalchemy import Column, String, Integer, Text, Boolean, DateTime, ForeignKey, func
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    func,
+)
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 from app.core.database import Base
+
 
 class Call(Base):
     __tablename__ = "calls"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    lead_id = Column(UUID(as_uuid=True), ForeignKey("leads.id", ondelete="SET NULL"), nullable=True, index=True)
+    lead_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("leads.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     phone_number = Column(String(50), nullable=False, index=True)
     direction = Column(String(20), nullable=False)
     status = Column(String(50), nullable=False, index=True)
@@ -18,6 +33,11 @@ class Call(Base):
     call_summary = Column(Text, nullable=True)
     analysis = Column(JSONB, nullable=True)
     is_self_test = Column(Boolean, default=False, nullable=False, index=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    started_at = Column(DateTime(timezone=True), nullable=True, index=True)
+    answered_at = Column(DateTime(timezone=True), nullable=True)
+    ended_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now(), index=True
+    )
 
     lead = relationship("Lead", back_populates="calls")

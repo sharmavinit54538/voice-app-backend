@@ -1,28 +1,58 @@
+from typing import Any, Dict
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import GEMINI_MODEL
 from app.core.database import get_db
+from app.core.exceptions import AIServiceError
 from app.models.whatsapp import WhatsAppMessage
 from app.schemas.ai import AISummarizeConversationRequest
-from app.services.gemini_service import extract_lead_from_text, summarize_conversation_history
+from app.services.gemini_service import (
+    extract_lead_from_text,
+    summarize_conversation_history,
+)
 
 router = APIRouter(prefix="/api/ai", tags=["AI"])
 
+
 @router.post("/extract-lead")
-async def ai_extract_lead(text: str = Query(..., description="Raw text containing lead contact information")):
-    extracted = await extract_lead_from_text(text)
-    return {"model": GEMINI_MODEL, "extracted_data": extracted}
+async def ai_extract_lead(
+    text: str = Query(
+        ..., description="Raw text containing lead contact information"
+    ),
+) -> Dict[str, Any]:
+    try:
+        extracted = await extract_lead_from_text(text)
+        return {"model": GEMINI_MODEL, "extracted_data": extracted}
+    except AIServiceError as exc:
+        raise HTTPException(
+            status_code=exc.status_code, detail=exc.message
+        ) from exc
+
 
 @router.post("/summarize-conversation")
-async def ai_summarize_conversation(payload: AISummarizeConversationRequest, db: AsyncSession = Depends(get_db)):
+async def ai_summarize_conversation(
+    payload: AISummarizeConversationRequest, db: AsyncSession = Depends(get_db)
+) -> Dict[str, Any]:
     res = await db.execute(
-        select(WhatsAppMessage).where(WhatsAppMessage.conversation_id == payload.conversation_id)
+        select(WhatsAppMessage)
+        .where(WhatsAppMessage.conversation_id == payload.conversation_id)
         .order_by(WhatsAppMessage.created_at.asc())
     )
     messages = res.scalars().all()
     if not messages:
-        raise HTTPException(status_code=404, detail="No messages found in this conversation")
+        raise HTTPException(
+            status_code=404, detail="No messages found in this conversation"
+        )
     history = "\n".join([f"{m.sender.upper()}: {m.content}" for m in messages])
-    summary = await summarize_conversation_history(history)
-    return {"conversation_id": payload.conversation_id, "summary": summary, "model": GEMINI_MODEL}
+    try:
+        summary = await summarize_conversation_history(history)
+        return {
+            "conversation_id": payload.conversation_id,
+            "summary": summary,
+            "model": GEMINI_MODEL,
+        }
+    except AIServiceError as exc:
+        raise HTTPException(
+            status_code=exc.status_code, detail=exc.message
+        ) from exc
